@@ -73,9 +73,9 @@ diff_eq_theta_b = eq_motion(L, the_b, the_b_d, the_b_dd, t)
 
 print(the_a_d)
 
-print("Equation of motion for theta_a:")
+print("Equation of motion for theta_a :")
 smp.pprint(diff_eq_theta_a)
-print("\nEquation of motion for theta_b:")
+print("\nEquation of motion for theta_b :")
 smp.pprint(diff_eq_theta_b)
 
 """
