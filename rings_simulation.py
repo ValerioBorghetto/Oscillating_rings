@@ -2,38 +2,34 @@ import numpy as np
 import sympy as smp
 from scipy.integrate import solve_ivp
 from utils import *
-from plotting import *
+from plotting_vpython import *
+###################System settings####################
 
-
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
-from matplotlib.animation import FuncAnimation
-
-
-###############Settings########################
-
-####RING_1####
-m_val_a = 1  # Mass ring a
-R_val_a = 5.0  # Radius ring a
-k_val_a = 1.0  # Spring constant ring a
-theta_a_0 = 1.5  # Initial angle (in radians) ring a
+#RING_1
+m_val_a = 2.5  # Mass ring a (kg)
+R_val_a = 0.30  # Radius ring a (m)
+k_val_a =  0.4 # Spring constant ring a (N/rad)
+theta_a_0 = 0.5  # Initial angle (in radians) ring a
 theta_a_dot_0 = 0.0  # Initial angular velocity ring a
-
-####RING_2####
-m_val_b = 0.5  # Mass ring b
-R_val_b = 2.0  # Radius ring b IMPORTANT: (R_a > R_b)
-k_val_b = 1  # Spring constant ring b
+ 
+#RING_2
+m_val_b = 0.25  # Mass ring b (kg)
+R_val_b = 0.10  # Radius ring b IMPORTANT: (R_a > R_b) (m)
+k_val_b = 1  # Spring constant ring b (N/rad)
 theta_b_0 = 0.75  # Initial angle (in radians) ring b
 theta_b_dot_0 = 0.0  # Initial angular velocity ring b
 
-####Time####
-t_0 = 0  # Starting time
-t_f = 10 # Final time
-t_points=100 #How many time steps
+#TIME
+t_0 = 0  # Starting time (s)
+t_f = 30 # Final time (s)
+t_points=1800 #How many time steps (Usually 60*(t_f-t_0))
 
-####Analytical solution####
-anal_sol=True
-###############################################
+#ANALYTICAL SOLUTION
+anal_sol=False #If you want an alaytical solution
+
+######################################################
+
+assert(R_val_a>R_val_b), "R_a must be bigger than R_b"
 
 #symbols
 t, m_a, k_a, R_a, m_b, R_b, k_b = smp.symbols('t m_a k_a R_a m_b R_b k_b', real=True)
@@ -52,7 +48,7 @@ constants=(m_val_a, k_val_a, R_val_a, m_val_b, k_val_b, R_val_b)
 initial_conditions=(theta_a_0, theta_a_dot_0,theta_b_0, theta_b_dot_0)
 
 #Angular velocity
-omega_a = smp.Matrix([0, 0, the_a_d]) #rendila generale
+omega_a = smp.Matrix([0, 0, the_a_d]) 
 omega_b = smp.Matrix([0,0, the_b_d])
 
 #Inertia tensor
@@ -66,41 +62,21 @@ V_a=(1/2) * k_a * the_a**2
 V_b=(1/2) * k_b * (the_b-the_a)**2
 L= T_a + T_b - V_a - V_b
 
-#Solving equation of motion
+#Find the differential equation with Euler-Lagrange
 diff_eq_theta_a = eq_motion(L, the_a, the_a_d, the_a_dd, t)
-
 diff_eq_theta_b = eq_motion(L, the_b, the_b_d, the_b_dd, t)
 
-print(the_a_d)
-
+"""
 print("Equation of motion for theta_a :")
 smp.pprint(diff_eq_theta_a)
 print("\nEquation of motion for theta_b :")
 smp.pprint(diff_eq_theta_b)
-
 """
-#Work in progress
+
+#Work in progress, analytical solution
 if anal_sol:
-    eq_a = smp.Eq(the_a.diff(t, 2), diff_eq_theta_a)
-    eq_b = smp.Eq(the_b.diff(t, 2), diff_eq_theta_b)
-    theta_a0, omega_a0, theta_b0, omega_b0 = smp.symbols('theta_a0 omega_a0 theta_b0 omega_b0')
+    sol_anal(t, the_a, the_b, diff_eq_theta_a, diff_eq_theta_b)
 
-    # Solve the equations
-    anal_sol_a = smp.dsolve(eq_a, the_a, ics={the_a.subs(t, 0): theta_a0, the_a.diff(t).subs(t, 0): omega_a0})
-    anal_sol_b = smp.dsolve(eq_b, the_b,ics={the_b.subs(t, 0): theta_b0, the_b.diff(t).subs(t, 0): omega_b0})
-
-    anal_sol_b = anal_sol_b.rhs
-
-    integral_expr = smp.integrate(anal_sol_b, t)  # Integrate theta_b with respect to t
-    anal_sol_a = anal_sol_a.rhs.subs(the_b, integral_expr)
-
-
-    print("Analytical solution for theta_a:")
-    smp.pprint(anal_sol_a)
-    print("\nAnalytical solution for theta_b:")
-    smp.pprint(anal_sol_b)
-
-"""
 #Lambdify the equations
 dthe_dtdt_a=smp.lambdify(labels_a + labels_b + (t,), diff_eq_theta_a)
 dthe_dtdt_b=smp.lambdify(labels_a + labels_b + (t,), diff_eq_theta_b)
@@ -114,4 +90,5 @@ theta_b_dot_sol = sol.y[3]  # theta_b_dot(t)
 
 simulation(R_1=R_val_a, R_2=R_val_b, sol=sol, t_points=t_points)
 
-
+plot_theta(theta_b_sol, t_0, t_f, t_points )
+plot_theta(theta_a_sol, t_0, t_f, t_points)
