@@ -2,16 +2,24 @@ import sympy as smp
 import numpy as np
 from scipy.integrate import solve_ivp
 
-def eq_motion(L, var, var_d, var_dd, t):
-    LE= smp.diff(L, var) - smp.diff(smp.diff(L, var_d), t)
-    LE=LE.simplify()
-    return(smp.solve(LE, var_dd, simplify = False, rational=False)[0])
+def EL_eq_motion(L, var, var_d, var_dd, t):
+    EL= smp.diff(L, var) - smp.diff(smp.diff(L, var_d), t)
+    EL=EL.simplify()
+    return(smp.solve(EL, var_dd, simplify = False, rational=False)[0])
+
+#until there is no V depending on p, this is the solution to the second Hamilton equation. Otherwise this method must be changed.
+def H_eq_motion(H, I, var, var_d, var_dd, t):
+    p=var_d*I[2,2] 
+    H_1= smp.diff(p, t) + smp.diff(H, var)
+    H_1=H_1.simplify()
+    return(smp.solve(H_1, var_dd, simplify = False, rational=False)[0])
 
 
-def system_of_eqs(t, y, m_a, k_a, R_a, m_b, R_b, k_b, eq_theta_a, eq_theta_b):
+
+def system_of_eqs(t, y, m_a, k_a, R_a, M_a, m_b, R_b, k_b, M_b, B_est, eq_theta_a, eq_theta_b):
     theta_a, theta_a_dot, theta_b, theta_b_dot = y
-    theta_a_dd = eq_theta_a(m_a, k_a, R_a, theta_a, theta_a_dot, m_b, R_b, k_b, theta_b, theta_b_dot, t)
-    theta_b_dd = eq_theta_b(m_a, k_a, R_a, theta_a, theta_a_dot, m_b, R_b, k_b, theta_b, theta_b_dot, t)
+    theta_a_dd = eq_theta_a(m_a, k_a, R_a, M_a, theta_a, theta_a_dot, m_b, R_b, k_b, M_b, theta_b, theta_b_dot, B_est, t)
+    theta_b_dd = eq_theta_b(m_a, k_a, R_a, M_a, theta_a, theta_a_dot, m_b, R_b, k_b, M_b, theta_b, theta_b_dot, B_est, t)
     return [theta_a_dot, theta_a_dd, theta_b_dot, theta_b_dd]
 
 
