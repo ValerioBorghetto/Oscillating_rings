@@ -1,4 +1,5 @@
 from vpython import ring, vector, rate, scene, box, cylinder, color
+import numpy as np
 import matplotlib.pyplot as plt
 
 
