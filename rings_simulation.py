@@ -1,31 +1,35 @@
 import sympy as smp
 from utils import *
 from plotting_funcs import *
+from magnetic_field import *
 ###################System settings####################
+
+#constants
+mu_0=4*np.pi*10**(-7) #H/m
 
 #RING_1
 m_val_a = 0.5  # Mass ring a (kg)
 R_val_a = 0.30  # Radius ring a (m)
-k_val_a =  0.5 # Spring constant ring a (N/rad)
-M_val_a = 3  # Magnetization ring a (A/m) (For Nickel in a low magnetic field is 3 A/m)
-theta_a_0 = 1  # Initial angle (in radians) ring a
-theta_a_dot_0 = 5.0  # Initial angular velocity ring a (rad/s)
+k_val_a =  0.05 # Spring constant ring a (N/rad)
+M_val_a = 0.9  # Magnetization ring a (A/m) (For Nickel in a low magnetic field is 3 A/m)
+theta_a_0 = 0  # Initial angle (in radians) ring a
+theta_a_dot_0 = 10  # Initial angular velocity ring a (rad/s)
  
 #RING_2
 m_val_b = 0.25  # Mass ring b (kg)
 R_val_b = 0.20  # Radius ring b IMPORTANT: (R_a > R_b) (m)
-k_val_b = 0.8  # Spring constant ring b (N/rad)
+k_val_b = 0.08  # Spring constant ring b (N/rad)
 M_val_b = 3  # Magnetization ring b (A/m) (For Nickel in a low magnetic field is 3 A/m)
-theta_b_0 = 1.75  # Initial angle (in radians) ring b
-theta_b_dot_0 = 0.0  # Initial angular velocity ring b (rad/s)
+theta_b_0 = 1  # Initial angle (in radians) ring b
+theta_b_dot_0 = 0     # Initial angular velocity ring b (rad/s)
 
 #B 
-B_val_est=0.05 # External magnetic field (T) 
+B_val_est=0 # External magnetic field (T) 
 
 #TIME
 t_0 = 0  # Starting time (s)
-t_f = 30 # Final time (s)
-t_points=1800 #How many time steps (Usually 60*(t_f-t_0))
+t_f = 20 # Final time (s)
+t_points=1200 #How many time steps (Usually 60*(t_f-t_0))
 
 #ANALYTICAL SOLUTION (Work in progress)
 anal_sol=False # If you want an analytical solution
@@ -66,12 +70,24 @@ T_b=(1/2) * omega_b.T.dot(I_b*omega_b).simplify()
 Vel_a=(1/2) * k_a * the_a**2
 Vel_b=(1/2) * k_b * (the_a-the_b)**2
 #Magnetic moment alignment
-h_a=2*smp.pi*R_a*(R_a/20)*M_a # using \mu=M*A
-h_b=2*smp.pi*R_b*(R_b/20)*M_b
-Hm_a=-h_a*smp.cos(the_a)
-Hm_b=-h_b*smp.cos(the_b)
+#h_a=2*smp.pi*R_a*(R_a/20)*M_a*B_est # using \mu=M*A
+#h_b=2*smp.pi*R_b*(R_b/20)*M_b*B_est
+#Hm_a=-h_a*smp.cos(the_a)
+#Hm_b=-h_b*smp.cos(the_b)
+#DA TOGLIERE
+a=10#m_val_a*mu_0/(4*np.pi) #m*mu_0/4pi
+b=8
+L=0.09  
+L_1=0.05
+k=R_val_a-R_val_b
+m=m_val_b
+H_mag=H_magnetic(a, L, L_1, k, m, t)
+#H_mag_2=H_magnetic(b, L_1, L, k, m_val_a, t)
+#Hm_ab1=-M_a*M_b*2*smp.pi*R_a*(R_a/20)*smp.cos(the_a-the_b)
+#Hm_ab2 = -M_a*M_b*2*smp.pi*R_b*(R_b/20)*smp.cos(the_a-the_b)
 #L= T_a + T_b - V_a - V_b 
-H=T_a + T_b + Vel_a + Vel_b + Hm_a + Hm_b #
+H=T_a + T_b + H_mag + Vel_a + Vel_b# + H_mag_2 #+ Vel_a + Vel_b + H_sin# + Hm_a + Hm_b + Hm_ab1 + Hm_ab2
+print(H)
 
 #Find the differential equation with Euler-Lagrange
 #el_eq_theta_a = EL_eq_motion(L, the_a, the_a_d, the_a_dd, t)
@@ -103,6 +119,6 @@ theta_a_dot_sol = sol.y[1]  # theta_a_dot(t)
 theta_b_sol = sol.y[2]  # theta_b(t)
 theta_b_dot_sol = sol.y[3]  # theta_b_dot(t)
 
-simulation(R_1=R_val_a, R_2=R_val_b, sol=sol, t_points=t_points)
-
 plot_results(sol=sol, t_min=t_0, t_max=t_f, t_points=t_points)
+
+simulation(R_1=R_val_a, R_2=R_val_b, sol=sol, t_points=t_points)
