@@ -1,6 +1,7 @@
 import sympy as smp
 import numpy as np
 from scipy.integrate import solve_ivp
+import matplotlib.pyplot as plt
 
 def EL_eq_motion(L, var, var_d, var_dd, t):
     EL= smp.diff(L, var) - smp.diff(smp.diff(L, var_d), t)
@@ -26,7 +27,7 @@ def system_of_eqs(t, y, m_a, k_a, R_a, M_a, m_b, R_b, k_b, M_b, B_est, eq_theta_
 def solve_system(initial_conditions, constants, t_0, t_f, t_points, eq_theta_a,eq_theta_b):
     t_span = (t_0, t_f)
     t_eval = np.linspace(t_0, t_f, t_points)
-    return(solve_ivp(system_of_eqs, t_span, initial_conditions, args=constants + (eq_theta_a, eq_theta_b), t_eval=t_eval, method='RK45'))
+    return(solve_ivp(system_of_eqs, t_span, initial_conditions, args=constants + (eq_theta_a, eq_theta_b), t_eval=t_eval, method='LSODA'))
 
 #Work in progress
 def sol_anal(t, the_a, the_b, diff_eq_a, diff_eq_b):
@@ -44,4 +45,23 @@ def sol_anal(t, the_a, the_b, diff_eq_a, diff_eq_b):
     print("\\Theta_b solution:")
     smp.pprint(solutions[1].simplify()) 
 
-    
+#To fit oscillating solutions, in order to stabilize the simulation
+def polinomial_fit(theta_sol, t_f, t_0, t_points, degree, show_fit=False):
+    dt=(t_f-t_0)/t_points
+    time_array = [t_0 + i * dt for i in range(t_points)]
+    t_eval = np.array(time_array)
+
+    # Fit theta_b(t) with a polynomial
+    poly_coeffs_theta = np.polyfit(t_eval, theta_sol, degree)
+    theta_fitted = np.polyval(poly_coeffs_theta, t_eval)
+
+    if show_fit==True:
+        plt.figure(figsize=(10,5))
+        plt.plot(t_eval, theta_sol, 'o', label="Original Data", markersize=2)
+        plt.plot(t_eval, theta_fitted, '-', label="Improved Fit", linewidth=2)
+        plt.legend()
+        plt.title(r"Improved Fit")
+
+        plt.show()
+
+    return theta_fitted

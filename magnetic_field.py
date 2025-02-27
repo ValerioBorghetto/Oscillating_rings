@@ -11,10 +11,16 @@ def H_magnetic(a, L, L_1, k, m, t):
 
     def B_field(x, y, z):
         r=sqrt(x**2+y**2+z**2)
-        num_1=(L/2-x)*(-r**4+(-L**2/4+x*L+x**2+3*z**2)*r**2+L**2/4*(x**2+2*z**2)-L*(x**3+2*x*z**2)-(x*z)**2)
-        den_1=(r**2+L/2*(L/2-2*x))**(3/2)
-        num_2=(L/2+x)*(r**4-(-L**2/4-x*L+x**2+3*z**2)*r**2-L**2/4*(x**2+2*z**2)-L*(x**3+2*x*z**2)+(x*z)**2)
-        den_2=(r**2+L/2*(L/2+2*x))**(3/2)
+        r_2=r**2
+        r_4=r**4
+        num_1=(L/2-x)*(-r_4+(-(L/2)**2+x*L+x**2+3*(z**2))*r_2+((L/2)**2)*(x**2+2*z**2)-L*(x**3+2*x*(z**2))-(x*z)**2)
+        #print(num_1)
+        den_1=(r_2+L/2*(L/2-2*x))**(3/2)
+        #print(den_1)
+        num_2=(L/2+x)*(r_4-(-L**2/4-x*L+x**2+3*z**2)*r_2-L**2/4*(x**2+2*z**2)-L*(x**3+2*x*z**2)+(x*z)**2)
+        #print(num_2)
+        den_2=(r_2+L/2*(L/2+2*x))**(3/2)
+        #print(den_2)
         den_3=1/(y**2+z**2)**2
         B= a*(num_1/den_1-num_2/den_2)*den_3
         B_simplified=simplify(B)
@@ -27,7 +33,7 @@ def H_magnetic(a, L, L_1, k, m, t):
 
 
     # Funzione per calcolare l'integrale
-    def B_numerico(phi_vals):
+    def B_numerical(phi_vals):
         integrals = []  # Lista per salvare i risultati
         for phi in phi_vals:
             # Definizione della funzione integranda per ogni phi
@@ -44,12 +50,12 @@ def H_magnetic(a, L, L_1, k, m, t):
     phi_vals = np.linspace(0, 2 * np.pi, 100)  # 100 punti tra 0 e 2pi
 
     # Calcolo degli integrali
-    integral_results = B_numerico(phi_vals)
+    integral_results = B_numerical(phi_vals)
 
-
+    #modello numpy
     def trig_model(phi, A, B, C, n):
         return A * np.cos(n * phi) + B * np.sin(n * phi) + C
-    
+    #modello sympy
     def trig_model_sym(phi, A, B, C, n):
         return A * cos(n * phi) + B * sin(n * phi) + C
 
@@ -67,11 +73,11 @@ def H_magnetic(a, L, L_1, k, m, t):
     phi = the_a-the_b
     print(trig_model_sym(phi, *params))
     plt.figure(figsize=(8, 6))
-    plt.plot(phi_vals, integral_results, label=r'$B(\phi)$', color='blue')
+    plt.plot(phi_vals, integral_results, label=r'$H_B(\Delta\theta)$', color='blue')
     plt.plot(phi_vals, trig_model(phi_vals, *params), label='Fit Trigonometrico', linestyle='--', color='red')
-    plt.xlabel(r'$\phi$', fontsize=14)
-    plt.ylabel(r'Integrale di $B$', fontsize=14)
-    plt.title('Integrale di $B$ al variare di $\phi$', fontsize=16)
+    plt.xlabel(r'$\Delta\theta (rad)$', fontsize=14)
+    plt.ylabel(r'Integrale di $H_B (J)$', fontsize=14)
+    plt.title('Integrale di $H_B$ al variare di $\Delta\\theta$ ', fontsize=16)
     plt.legend(fontsize=12)
     plt.grid(True)
     plt.show()

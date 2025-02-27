@@ -2,6 +2,8 @@ from vpython import ring, vector, rate, scene, box, cylinder, color
 import numpy as np
 import matplotlib.pyplot as plt
 
+#animation frame per second
+frame=60
 
 def update_ring(ring_object, angle):
     #Update the rotation of the ring based on the given angle.
@@ -41,7 +43,7 @@ def simulation( R_1, R_2, sol, t_points):
         if i < len(theta2_array):
             update_ring(ring2, theta2_array[i])
 
-        rate(60)  # Controls the animation speed
+        rate(frame)  # Controls the animation speed
 
 
 #plotting both phase space and theta(t) with matplotlib
@@ -51,19 +53,19 @@ def plot_results(sol, t_min, t_max, t_points):
         
     fig, axs = plt.subplots(2, 2, figsize=(10, 8)) 
     #1
-    axs[0, 0].plot(sol.y[0], sol.y[2], color='blue')
+    axs[0, 0].plot(sol.y[0][:-300], sol.y[2][:-300], color='blue')
     axs[0, 0].set_title("Theta_a phase space")
     axs[0, 0].set(xlabel=' Theta_a (rad)', ylabel= ' Momentum_a ')
     #2
-    axs[0, 1].plot(sol.y[1], sol.y[3], color='green')
+    axs[0, 1].plot(sol.y[1][:-300], sol.y[3][:-300], color='green')
     axs[0, 1].set_title("Theta_b phase space")
     axs[0, 1].set(xlabel=' Theta_b (rad)', ylabel= ' Momentum_b ')
     #3
-    axs[1, 0].plot(time_array, sol.y[0], color='red')
+    axs[1, 0].plot(time_array[:-300], sol.y[0][:-300], color='red')
     axs[1, 0].set_title("Theta_a over time")
     axs[1, 0].set(xlabel=' Time (s)', ylabel= ' Theta_a (rad)')
     #4
-    axs[1, 1].plot(time_array, sol.y[3], color='purple')
+    axs[1, 1].plot(time_array[:-300], sol.y[3][:-300], color='purple')
     axs[1, 1].set_title("Theta_b over time")
     axs[1, 1].set(xlabel=' Time (s)', ylabel= ' Theta_b (rad)')
 
