@@ -1,19 +1,22 @@
-# Anelli concentrici sottoposti a campo magnetico
+# Concentric ferromagnetic rings subjected to a Magnetic field
 
-## Indice
-1. [Descrizione](#descrizione)
-2. [Librerie](#librerie)
+## Index
+1. [Description](#description)
+2. [Libraries](#libraries)
 
 ---
 
-## Descrizione
+## Description
 
-Il problema considera due anelli concentrici ferromagnetici verticali legati tra loro da un filo, e con il maggiore legato al pavimento da un altro filo. Sono poi sottoposti a campo magnetico. I termini introdotti nell'Hamiltoniana sono quindi:
-- Termine cinetico per ogni anello
-- Potenziale elastico per entrambi i fili
-- Interazione tra il momento magnetico di entrambi gli anelli e il campo esterno
+The problem considers two concentric vertical ferromagnetic rings connected by a wire, with the larger ring also attached to the floor by another wire. They are then subjected to a magnetic field. The terms introduced in the Hamiltonian are:
 
-## Librerie
-Il progetto è in Python, e utilizza le librerie: 
-- Per i conti: **Numpy**, **Sympy** and **Scipy**;
-- Per la grafica: **Matplotlib** and **VPython**.
+-Kinetic term for each ring
+-Elastic potential for both wires
+-Interaction between the magnetic moment of both rings and the external field
+
+For the latter, we considered the magnetic interaction due to two magnetic dipoles, since the magnetisation acts in first approximation just to the upper part of the rings.
+
+## Libraries
+The project is in Pythin, and uses the following libraries:
+- To compute: **Numpy**, **Sympy** and **Scipy**;
+- For the graphics: **Matplotlib** and **VPython**.

@@ -67,11 +67,11 @@ def H_magnetic(a, L, L_1, k, m, t):
 
     # Estrai i parametri ottimizzati
     A, B, C, n = params
-    print(f"Parametri ottimizzati: A={A:.3f}, B={B:.3f}, C={C:.3f}, n={n:.3f}")
+    #print(f"Parametri ottimizzati: A={A:.3f}, B={B:.3f}, C={C:.3f}, n={n:.3f}")
     the_a = symbols('theta_a', cls=Function)(t)
     the_b = symbols('theta_b', cls=Function)(t)
     phi = the_a-the_b
-    print(trig_model_sym(phi, *params))
+    #print(trig_model_sym(phi, *params))
     plt.figure(figsize=(8, 6))
     plt.plot(phi_vals, integral_results, label=r'$H_B(\Delta\theta)$', color='blue')
     plt.plot(phi_vals, trig_model(phi_vals, *params), label='Fit Trigonometrico', linestyle='--', color='red')

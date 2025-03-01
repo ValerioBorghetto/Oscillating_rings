@@ -77,6 +77,7 @@ d=R_val_a-R_val_b
 m=M_val_b
 H_mag=H_magnetic(a, L_a, L_b, d, M_val_b, t) 
 H=T_a + T_b + Vel_a + Vel_b +H_mag 
+#print("Total Hamiltonian: ", H)
 
 
 #Find the differential equation with Hamilton
